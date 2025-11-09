@@ -149,7 +149,7 @@ func ensureTLSCerts(certPath, keyPath string) error {
 	return nil
 }
 
-func initialize(cfg *config.Config) (err error) {
+func initializeDB(cfg *config.Config) (err error) {
 	if err := ensureDBDir(cfg.DBPath); err != nil {
 		return fmt.Errorf("failed to create database directory: %w", err)
 	}
@@ -170,10 +170,6 @@ func initialize(cfg *config.Config) (err error) {
 	if err := database.InitSchema(); err != nil {
 		return fmt.Errorf("failed to initialize schema: %w", err)
 	}
-
-	if err := ensureTLSCerts(cfg.TLSCert, cfg.TLSKey); err != nil {
-		return fmt.Errorf("failed to generate TLS certificates: %w", err)
-	}
 	return nil
 }
 
@@ -190,8 +186,8 @@ func cmdAddUser() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	if err := ensureDBDir(cfg.DBPath); err != nil {
-		log.Fatalf("Failed to create database directory: %v", err)
+	if err := initializeDB(cfg); err != nil {
+		log.Fatalf("Failed to initialize the  database: %v", err)
 	}
 
 	database, err := db.Open(cfg.DBPath)
@@ -240,8 +236,11 @@ func cmdServe() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	if err := initialize(cfg); err != nil {
-		log.Fatalf("Failed to initialize state: %v", err)
+	if err := initializeDB(cfg); err != nil {
+		log.Fatalf("Failed to initialize the database: %v", err)
+	}
+	if err := ensureTLSCerts(cfg.TLSCert, cfg.TLSKey); err != nil {
+		log.Fatalf("Failed to generate TLS certificates: %v", err)
 	}
 	fmt.Println("Initialization complete!")
 

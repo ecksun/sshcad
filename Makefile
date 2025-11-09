@@ -2,6 +2,14 @@
 lint: bin/golangci-lint
 	$< run
 
+.PHONY: clean
+clean:
+	rm -rf bin/ tmp/
+
+.PHONY: test-mkosi
+start-vm:
+	$(MAKE) -C ./test/mkosi
+
 GOLANGCI_LINT_VERSION := 2.5.0
 bin/golangci-lint: bin/golangci-lint-$(GOLANGCI_LINT_VERSION)
 	cp --link $< $@

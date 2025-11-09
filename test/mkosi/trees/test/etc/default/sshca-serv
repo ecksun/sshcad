@@ -1,0 +1,4 @@
+SSHCA_LISTEN_ADDR=0.0.0.0:8443
+SSHCA_DB_PATH=/var/lib/sshca-serv/sshca.db
+SSHCA_PRINCIPALS=testuser
+SSHCA_VALIDITY=-1m:+1h

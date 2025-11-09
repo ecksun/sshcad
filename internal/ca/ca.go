@@ -10,7 +10,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	"github.com/ecksun/sshca-serv/internal/db"
+	"github.com/ecksun/sshcad/internal/db"
 )
 
 type Signer struct {

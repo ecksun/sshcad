@@ -4,15 +4,15 @@ After=network.target
 
 [Service]
 Type=simple
-User=sshca-serv
-Group=sshca-serv
+User=sshcad
+Group=sshcad
 
-# Load environment variables from /etc/default/sshca-serv
-EnvironmentFile=/etc/default/sshca-serv
+# Load environment variables from /etc/default/sshcad
+EnvironmentFile=/etc/default/sshcad
 
 # Systemd directory management
-StateDirectory=sshca-serv
-ConfigurationDirectory=sshca-serv
+StateDirectory=sshcad
+ConfigurationDirectory=sshcad
 
 # Load CA private key from systemd credentials (TPM2-encrypted)
 # Key stored in /etc/credstore.encrypted/ca-private-key (no .cred extension!)
@@ -21,14 +21,14 @@ LoadCredentialEncrypted=ca-private-key:ca-private-key
 
 ExecStartPre=/usr/bin/find $CREDENTIALS_DIRECTORY
 ExecStartPre=/usr/bin/ls -al $CREDENTIALS_DIRECTORY
-ExecStart=/usr/local/bin/sshca-serv serve
+ExecStart=/usr/local/bin/sshcad serve
 
 # Security hardening
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/var/lib/sshca-serv
+ReadWritePaths=/var/lib/sshcad
 
 # Restart policy
 Restart=on-failure

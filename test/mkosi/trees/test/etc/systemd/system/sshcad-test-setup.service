@@ -1,6 +1,6 @@
 [Unit]
 Description=SSH CA Service Test Setup
-Before=sshca-serv.service
+Before=sshcad.service
 DefaultDependencies=no
 After=local-fs.target
 
@@ -10,8 +10,8 @@ RemainAfterExit=yes
 
 ExecStart=ssh-keygen -t ed25519 -f /tmp/test_ca -N "" -C "Test CA"
 ExecStart=systemd-creds encrypt --with-key=auto --name=ca-private-key /tmp/test_ca /etc/credstore.encrypted/ca-private-key
-ExecStart=openssl req -x509 -newkey rsa:2048 -keyout /etc/sshca-serv/key.pem -out /etc/sshca-serv/cert.pem -days 365 -nodes -subj "/CN=localhost"
-ExecStart=chown sshca-serv:sshca-serv /etc/sshca-serv/cert.pem /etc/sshca-serv/key.pem
+ExecStart=openssl req -x509 -newkey rsa:2048 -keyout /etc/sshcad/key.pem -out /etc/sshcad/cert.pem -days 365 -nodes -subj "/CN=localhost"
+ExecStart=chown sshcad:sshcad /etc/sshcad/cert.pem /etc/sshcad/key.pem
 
 [Install]
 WantedBy=multi-user.target

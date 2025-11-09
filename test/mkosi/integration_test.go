@@ -25,11 +25,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ecksun/sshca-serv/internal/api"
-	"github.com/ecksun/sshca-serv/internal/auth"
-	"github.com/ecksun/sshca-serv/internal/ca"
-	"github.com/ecksun/sshca-serv/internal/config"
-	"github.com/ecksun/sshca-serv/internal/db"
+	"github.com/ecksun/sshcad/internal/api"
+	"github.com/ecksun/sshcad/internal/auth"
+	"github.com/ecksun/sshcad/internal/ca"
+	"github.com/ecksun/sshcad/internal/config"
+	"github.com/ecksun/sshcad/internal/db"
 	"golang.org/x/crypto/ssh"
 )
 

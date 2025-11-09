@@ -10,8 +10,8 @@ A secure HTTPS service for signing SSH public keys with a Certificate Authority,
 # Generate a test CA key
 ssh-keygen -t ed25519 -f ./tmp/test_ca -N "" -C "Test CA"
 
-./sshca-serv add-user alice
-./sshca-serv serve
+./sshcad add-user alice
+./sshcad serve
 ```
 
 ## API Reference
@@ -74,7 +74,7 @@ Returns service health status.
 
 ## Configuration
 
-Configuration is loaded from environment variables, typically set in `/etc/default/sshca-serv`.
+Configuration is loaded from environment variables, typically set in `/etc/default/sshcad`.
 
 | Variable            | Default          | Description                                           |
 | ----------          | ---------        | -------------                                         |
@@ -87,10 +87,10 @@ Configuration is loaded from environment variables, typically set in `/etc/defau
 
 ## CLI Commands
 
-### `sshca-serv add-user <username>`
+### `sshcad add-user <username>`
 Creates a new user with interactive password prompt.
 
-### `sshca-serv serve`
+### `sshcad serve`
 Starts the HTTPS server.
 
 ## Client Usage Example
@@ -112,4 +112,4 @@ ssh user@server
 ## Deployment Files
 
 - `configs/Caddyfile.example` - Caddy reverse proxy configuration with automatic HTTPS
-- `configs/sshca-serv.example` - Environment variables for sshca-serv
+- `configs/sshcad.example` - Environment variables for sshcad

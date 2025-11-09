@@ -19,11 +19,11 @@ import (
 
 	"golang.org/x/term"
 
-	"github.com/ecksun/sshca-serv/internal/api"
-	"github.com/ecksun/sshca-serv/internal/auth"
-	"github.com/ecksun/sshca-serv/internal/ca"
-	"github.com/ecksun/sshca-serv/internal/config"
-	"github.com/ecksun/sshca-serv/internal/db"
+	"github.com/ecksun/sshcad/internal/api"
+	"github.com/ecksun/sshcad/internal/auth"
+	"github.com/ecksun/sshcad/internal/ca"
+	"github.com/ecksun/sshcad/internal/config"
+	"github.com/ecksun/sshcad/internal/db"
 )
 
 func main() {
@@ -50,7 +50,7 @@ func main() {
 }
 
 func printUsage() {
-	fmt.Println("Usage: sshca-serv <command>")
+	fmt.Println("Usage: sshcad <command>")
 	fmt.Println()
 	fmt.Println("Commands:")
 	fmt.Println("  add-user <username>  Add a new user with password")
@@ -97,8 +97,8 @@ func ensureTLSCerts(certPath, keyPath string) error {
 	template := x509.Certificate{
 		SerialNumber: serialNumber,
 		Subject: pkix.Name{
-			Organization: []string{"sshca-serv"},
-			CommonName:   "sshca-serv",
+			Organization: []string{"sshcad"},
+			CommonName:   "sshcad",
 		},
 		NotBefore:             time.Now(),
 		NotAfter:              time.Now().Add(40 * 365 * 24 * time.Hour),
@@ -175,7 +175,7 @@ func initializeDB(cfg *config.Config) (err error) {
 
 func cmdAddUser() {
 	if len(os.Args) < 3 {
-		fmt.Println("Usage: sshca-serv add-user <username>")
+		fmt.Println("Usage: sshcad add-user <username>")
 		os.Exit(1)
 	}
 

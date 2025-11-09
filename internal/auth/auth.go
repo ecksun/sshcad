@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/ecksun/sshca-serv/internal/db"
+	"github.com/ecksun/sshcad/internal/db"
 )
 
 type contextKey string

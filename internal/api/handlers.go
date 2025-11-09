@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ecksun/sshca-serv/internal/auth"
-	"github.com/ecksun/sshca-serv/internal/ca"
+	"github.com/ecksun/sshcad/internal/auth"
+	"github.com/ecksun/sshcad/internal/ca"
 )
 
 type Server struct {

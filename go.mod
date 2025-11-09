@@ -1,4 +1,4 @@
-module github.com/ecksun/sshca-serv
+module github.com/ecksun/sshcad
 
 go 1.24.4
 

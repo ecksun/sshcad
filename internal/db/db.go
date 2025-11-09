@@ -127,6 +127,15 @@ func (db *DB) AuthenticateUser(username, password string) (*User, error) {
 	return &user, nil
 }
 
+func (db *DB) CountUsers() (int, error) {
+	var count int
+	err := db.conn.QueryRow("SELECT COUNT(*) FROM users").Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("failed to count users: %w", err)
+	}
+	return count, nil
+}
+
 // AllocateSerial atomically allocates the next serial number for a certificate
 // Uses a dedicated sequence table with AUTOINCREMENT to prevent race conditions
 func (db *DB) AllocateSerial() (int64, error) {

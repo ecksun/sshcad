@@ -10,7 +10,10 @@ A secure HTTPS service for signing SSH public keys with a Certificate Authority,
 # Generate a test CA key
 ssh-keygen -t ed25519 -f ./tmp/test_ca -N "" -C "Test CA"
 
-./sshcad add-user alice
+# Initialize database and create first user
+./sshcad init
+
+# Start the server
 ./sshcad serve
 ```
 
@@ -87,11 +90,24 @@ Configuration is loaded from environment variables, typically set in `/etc/defau
 
 ## CLI Commands
 
+### `sshcad init`
+Initialize the database and create the first user. Prompts for username and password interactively (or reads from stdin if not a TTY). This is a no-op if users already exist in the database.
+
+**Interactive usage:**
+```bash
+./sshcad init
+```
+
+**Non-interactive usage (for scripting/testing):**
+```bash
+echo -e "alice\npassword" | ./sshcad init
+```
+
 ### `sshcad add-user <username>`
-Creates a new user with interactive password prompt.
+Add a new user with interactive password prompt. Use this to add additional users after initialization.
 
 ### `sshcad serve`
-Starts the HTTPS server.
+Start the HTTPS server.
 
 ## Client Usage Example
 

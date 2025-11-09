@@ -38,6 +38,8 @@ func main() {
 	case "help", "--help", "-h":
 		printUsage()
 		os.Exit(0)
+	case "init":
+		cmdInit()
 	case "add-user":
 		cmdAddUser()
 	case "serve":
@@ -53,6 +55,7 @@ func printUsage() {
 	fmt.Println("Usage: sshcad <command>")
 	fmt.Println()
 	fmt.Println("Commands:")
+	fmt.Println("  init                 Initialize database and create first user (noop if users exist)")
 	fmt.Println("  add-user <username>  Add a new user with password")
 	fmt.Println("  serve                Start the HTTPS server (auto-initializes DB and TLS)")
 	fmt.Println("  help                 Show this help message")
@@ -253,6 +256,92 @@ func cmdAddUser() {
 	}
 
 	fmt.Printf("User '%s' created successfully\n", username)
+}
+
+func cmdInit() {
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	if err := initializeDB(cfg); err != nil {
+		log.Fatalf("Failed to initialize the database: %v", err)
+	}
+
+	database, err := db.Open(cfg.DBPath)
+	if err != nil {
+		log.Fatalf("Failed to open database: %v", err)
+	}
+	defer func() {
+		if err := database.Close(); err != nil {
+			log.Printf("Failed to close database: %v", err)
+		}
+	}()
+
+	count, err := database.CountUsers()
+	if err != nil {
+		log.Fatalf("Failed to count users: %v", err)
+	}
+
+	if count > 0 {
+		fmt.Println("Database already initialized with users")
+		return
+	}
+
+	var username string
+	fmt.Print("Username: ")
+	_, err = fmt.Scanln(&username)
+	if err != nil {
+		log.Fatalf("Failed to read username: %v", err)
+	}
+
+	if username == "" {
+		log.Fatal("Username cannot be empty")
+	}
+
+	var password string
+
+	if !term.IsTerminal(int(syscall.Stdin)) {
+		// Non-interactive mode: read from stdin (for testing/scripting)
+		_, err := fmt.Scanln(&password)
+		if err != nil {
+			log.Fatalf("Failed to read password from stdin: %v", err)
+		}
+
+		if password == "" {
+			log.Fatal("Password cannot be empty")
+		}
+	} else {
+		// Interactive mode: prompt for password
+		fmt.Print("Enter password: ")
+		passwordBytes, err := term.ReadPassword(int(syscall.Stdin))
+		if err != nil {
+			log.Fatalf("Failed to read password: %v", err)
+		}
+		fmt.Println()
+
+		password = string(passwordBytes)
+		if password == "" {
+			log.Fatal("Password cannot be empty")
+		}
+
+		fmt.Print("Confirm password: ")
+		confirmBytes, err := term.ReadPassword(int(syscall.Stdin))
+		if err != nil {
+			log.Fatalf("Failed to read password: %v", err)
+		}
+		fmt.Println()
+
+		if password != string(confirmBytes) {
+			log.Fatal("Passwords do not match")
+		}
+	}
+
+	if err := database.CreateUser(username, password); err != nil {
+		log.Fatalf("Failed to create user: %v", err)
+	}
+
+	fmt.Printf("Initial user '%s' created successfully\n", username)
 }
 
 func cmdServe() {

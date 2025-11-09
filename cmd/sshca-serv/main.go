@@ -200,27 +200,52 @@ func cmdAddUser() {
 		}
 	}()
 
-	fmt.Print("Enter password: ")
-	passwordBytes, err := term.ReadPassword(int(syscall.Stdin))
-	if err != nil {
-		log.Fatalf("Failed to read password: %v", err)
-	}
-	fmt.Println()
+	var password string
 
-	password := string(passwordBytes)
-	if password == "" {
-		log.Fatal("Password cannot be empty")
-	}
+	if !term.IsTerminal(int(syscall.Stdin)) {
+		// Non-interactive mode: read from stdin (for testing/scripting)
+		_, err := fmt.Scanln(&password)
+		if err != nil {
+			log.Fatalf("Failed to read password from stdin: %v", err)
+		}
 
-	fmt.Print("Confirm password: ")
-	confirmBytes, err := term.ReadPassword(int(syscall.Stdin))
-	if err != nil {
-		log.Fatalf("Failed to read password: %v", err)
-	}
-	fmt.Println()
+		var confirm string
+		_, err = fmt.Scanln(&confirm)
+		if err != nil {
+			log.Fatalf("Failed to read password confirmation from stdin: %v", err)
+		}
 
-	if password != string(confirmBytes) {
-		log.Fatal("Passwords do not match")
+		if password == "" {
+			log.Fatal("Password cannot be empty")
+		}
+
+		if password != confirm {
+			log.Fatal("Passwords do not match")
+		}
+	} else {
+		// Interactive mode: prompt for password
+		fmt.Print("Enter password: ")
+		passwordBytes, err := term.ReadPassword(int(syscall.Stdin))
+		if err != nil {
+			log.Fatalf("Failed to read password: %v", err)
+		}
+		fmt.Println()
+
+		password = string(passwordBytes)
+		if password == "" {
+			log.Fatal("Password cannot be empty")
+		}
+
+		fmt.Print("Confirm password: ")
+		confirmBytes, err := term.ReadPassword(int(syscall.Stdin))
+		if err != nil {
+			log.Fatalf("Failed to read password: %v", err)
+		}
+		fmt.Println()
+
+		if password != string(confirmBytes) {
+			log.Fatal("Passwords do not match")
+		}
 	}
 
 	if err := database.CreateUser(username, password); err != nil {

@@ -7,9 +7,11 @@ After=local-fs.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
+RuntimeDirectory=sshcad-test
+RuntimeDirectoryPreserve=yes
 
-ExecStart=ssh-keygen -t ed25519 -f /tmp/test_ca -N "" -C "Test CA"
-ExecStart=systemd-creds encrypt --with-key=auto --name=ca-private-key /tmp/test_ca /etc/credstore.encrypted/ca-private-key
+ExecStart=ssh-keygen -t ed25519 -f ${RUNTIME_DIRECTORY}/test_ca -N "" -C "Test CA"
+ExecStart=systemd-creds encrypt --with-key=auto --name=ca-private-key ${RUNTIME_DIRECTORY}/test_ca /etc/credstore.encrypted/ca-private-key
 ExecStart=openssl req -x509 -newkey rsa:2048 -keyout /etc/sshcad/key.pem -out /etc/sshcad/cert.pem -days 365 -nodes -subj "/CN=localhost"
 ExecStart=chown sshcad:sshcad /etc/sshcad/cert.pem /etc/sshcad/key.pem
 

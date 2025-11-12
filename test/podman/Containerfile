@@ -9,9 +9,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     jq \
     ca-certificates \
-    openssl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    openssl
 
 # Remove unnecessary systemd services to speed up boot
 RUN systemctl mask \
@@ -19,37 +17,19 @@ RUN systemctl mask \
     systemd-networkd.service \
     systemd-timesyncd.service
 
-# Create service user declaratively
 COPY systemd/sshcad-sysusers.conf /usr/lib/sysusers.d/sshcad.conf
 RUN systemd-sysusers
 
-# Create directories
 RUN mkdir -p /var/lib/sshcad /etc/sshcad /etc/credstore.encrypted
 RUN chown sshcad:sshcad /var/lib/sshcad
 
-# Copy the built binary (built outside container to avoid Go build cache issues)
-COPY test/podman/sshcad /usr/local/bin/sshcad
-RUN chmod +x /usr/local/bin/sshcad
-
-# Copy service files
+COPY --chmod=755 sshcad /usr/local/bin/sshcad
 COPY systemd/sshcad.service /etc/systemd/system/sshcad.service
-COPY test/mkosi/trees/test/etc/systemd/system/sshcad-test-setup.service /etc/systemd/system/sshcad-test-setup.service
+COPY trees/test/ /
 
-# Copy service override for test user initialization
-RUN mkdir -p /etc/systemd/system/sshcad.service.d
-COPY test/mkosi/trees/test/etc/systemd/system/sshcad.service.d/10-test-user.conf /etc/systemd/system/sshcad.service.d/10-test-user.conf
-
-# Copy environment file
-COPY test/mkosi/trees/test/etc/default/sshcad /etc/default/sshcad
-
-# Copy test script
-COPY test/podman/test.sh /root/test.sh
-RUN chmod +x /root/test.sh
-
-# Enable services
 RUN systemctl enable sshcad-test-setup.service sshcad.service
 
+# For debugging
 RUN echo "root:hunter2" | chpasswd
 
-# Use systemd as the init system
 CMD ["/lib/systemd/systemd"]

@@ -41,6 +41,7 @@ build/sshcad-test.raw: \
 	| build/trees/test/etc/credstore.encrypted/ \
 	build/trees/test/etc/sshcad/ \
 	build/trees/test/var/lib/sshcad/
+	chmod 0660 mkosi.rootpw
 	mkosi build
 
 .PHONY: clean

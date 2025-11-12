@@ -1,7 +1,7 @@
 .PHONY: test
 test: build/container
 	podman run --rm --detach --publish 8443:8443 --name sshcad-test sshcad-test
-	go test ../mkosi -server https://localhost:8443
+	go test ../ -server https://localhost:8443
 	podman stop "sshcad-test" 
 
 build/sshcad: | build/
